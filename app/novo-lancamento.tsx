@@ -57,21 +57,27 @@ export default function HomeScreen() {
 
   return (
     <>
-      <Stack.Screen options={{ title: 'Incluir Lançamento' }} />
+      <Stack.Screen options={{
+        title: 'Paywise',
+        headerTitleStyle: {
+          fontFamily: 'NunitoBold',
+          fontSize: 18
+        },
+      }} />
       <ThemedView style={styles.container}>
         <ScrollView contentContainerStyle={styles.scrollContainer}>
           <View style={styles.header}>
             <ThemedText type="title" style={styles.headerText}>Novo Lançamento</ThemedText>
           </View>
           <View style={styles.inputContainer}>
-            <ThemedText type="defaultSemiBold">Título</ThemedText>
+            <ThemedText type="label">Título</ThemedText>
             <TextInput
               style={styles.input}
               placeholder="Digite o título"
               value={titulo}
               onChangeText={setTitulo}
             />
-            <ThemedText type="defaultSemiBold">Categoria</ThemedText>
+            <ThemedText type="label">Categoria</ThemedText>
             <Picker
               selectedValue={categoria}
               style={styles.input}
@@ -82,7 +88,7 @@ export default function HomeScreen() {
                 <Picker.Item key={index} label={categoria.label} value={categoria.value} />
               ))}
             </Picker>
-            <ThemedText type="defaultSemiBold">Valor</ThemedText>
+            <ThemedText type="label">Valor</ThemedText>
             <TextInput
               style={styles.input}
               placeholder="Digite o valor"
@@ -90,7 +96,7 @@ export default function HomeScreen() {
               value={valor}
               onChangeText={handleValorChange}
             />
-            <ThemedText type="defaultSemiBold">Data de Pagamento</ThemedText>
+            <ThemedText type="label">Data de Pagamento</ThemedText>
             {Platform.OS === 'web' ? (
               <TextInput
                 style={styles.input}
@@ -146,11 +152,12 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
   },
   header: {
-    alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 20,    
   },
   headerText: {
-    color: '#4CAF50',
+    color: '#000',
+    fontFamily: 'NunitoBold',
+    fontSize: 18
   },
   inputContainer: {
     marginBottom: 20,
@@ -164,6 +171,7 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: '#FFFFFF',
     borderRadius: 8,
+    fontFamily: 'NunitoRegular'
   },
   buttonContainer: {
     flexDirection: 'row',
