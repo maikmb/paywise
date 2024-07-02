@@ -16,6 +16,7 @@
     "preset": "jest-expo"
   },
   "dependencies": {
+    "@expo-google-fonts/nunito": "^0.2.3",
     "@expo/vector-icons": "^14.0.0",
     "@react-native-community/datetimepicker": "^8.1.1",
     "@react-native-picker/picker": "^2.7.7",

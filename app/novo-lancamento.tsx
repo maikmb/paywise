@@ -9,6 +9,7 @@ import { LancamentoRepository } from '@/infra/repository/LancamentoRepository';
 import { Lancamento } from '@/domain/Lancamento';
 import { Text, TouchableOpacity } from 'react-native';
 import { format } from 'date-fns';
+import { Categorias } from '@/constants/Categorias';
 
 export default function HomeScreen() {
   const lancamentoRepository = new LancamentoRepository();
@@ -23,9 +24,15 @@ export default function HomeScreen() {
       Alert.alert('Erro', 'Todos os campos devem ser preenchidos.');
       return;
     }
-    const novoLancamento = new Lancamento(titulo, parseFloat(valor.replace(/\D/g, '')) / 100, categoria, dataPagamento);
-    lancamentoRepository.create(novoLancamento);
-    router.replace('/');
+    try {
+      const novoLancamento = new Lancamento(titulo, parseFloat(valor.replace(/\D/g, '')) / 100, categoria, dataPagamento);
+      novoLancamento.validarCampos();
+      lancamentoRepository.create(novoLancamento);
+      router.replace('/');
+    } catch (error) {
+      const errorMessage = (error as Error).message;
+      Alert.alert('Erro', errorMessage);
+    }
   };
 
   const handleCancel = () => {
@@ -45,6 +52,8 @@ export default function HomeScreen() {
     setShowDatePicker(Platform.OS === 'ios');
     setDataPagamento(currentDate);
   };
+
+
 
   return (
     <>
@@ -69,10 +78,9 @@ export default function HomeScreen() {
               onValueChange={(itemValue: string) => setCategoria(itemValue)}
             >
               <Picker.Item label="Selecione uma categoria" value="" />
-              <Picker.Item label="Cartão de Crédito" value="Cartão de Crédito" />
-              <Picker.Item label="Saúde" value="Saúde" />
-              <Picker.Item label="Moradia" value="Moradia" />
-              <Picker.Item label="Transporte" value="Transporte" />
+              {Categorias.map((categoria, index) => (
+                <Picker.Item key={index} label={categoria.label} value={categoria.value} />
+              ))}
             </Picker>
             <ThemedText type="defaultSemiBold">Valor</ThemedText>
             <TextInput
