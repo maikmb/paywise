@@ -1,5 +1,5 @@
 import { Stack, router } from 'expo-router';
-import { Button, StyleSheet, View, ScrollView, Animated, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, ScrollView, Animated, TouchableOpacity } from 'react-native';
 import { ThemedView } from '@/components/ThemedView';
 import { useState, useEffect, useRef } from 'react';
 import { Lancamento } from '@/domain/Lancamento';
@@ -8,6 +8,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { Picker } from '@react-native-picker/picker';
 import { Meses } from '@/constants/Meses';
 import { formatarMoeda } from '@/helpers/FormatarMoeda';
+import { Button } from '@/components/Button';
 
 export default function HomeScreen() {
   const lancamentoRepository = new LancamentoRepository();
@@ -15,7 +16,7 @@ export default function HomeScreen() {
   const [lancamentos, setLancamentos] = useState<Lancamento[]>([]);
   const [mesSelecionado, setMesSelecionado] = useState<string>(new Date().getMonth().toString());
 
-  useEffect(() => {    
+  useEffect(() => {
     const lancamentosFiltrados = lancamentoRepository
       .getAll()
       .filter(lancamento => new Date(lancamento.dataPagamento).getMonth().toString() === mesSelecionado);
@@ -49,10 +50,8 @@ export default function HomeScreen() {
         }}
       />
       <ThemedView style={styles.container}>
-        <View style={styles.header}>
-          <Animated.Text style={styles.totalValue}>
-            {formatarMoeda(totalLancamentos)}
-          </Animated.Text>
+        <View style={styles.header} className='bg-slate-600'>          
+            {formatarMoeda(totalLancamentos)}          
         </View>
         <ScrollView style={styles.lancamentosContainer}>
           {lancamentos.map((lancamento, index) => (
@@ -64,19 +63,16 @@ export default function HomeScreen() {
               <View style={styles.lancamentoInfo}>
                 <ThemedText type="defaultSemiBold" style={styles.lancamentoTitulo}>{lancamento.titulo}</ThemedText>
                 <ThemedText type="default" style={styles.lancamentoValor}>{formatarMoeda(lancamento.valor)}</ThemedText>
-              </View>              
+              </View>
             </TouchableOpacity>
           ))}
         </ScrollView>
         <View style={styles.buttonContainer}>
-          <Button
-            title="Incluir lançamento"
-            onPress={() => {
-              // Navegar para a página "novo-lancamento"
-              router.replace('/novo-lancamento')
-            }}
-            color="#000"
-          />
+
+          <Button label="Incluir lançamento" size="lg" labelClasses="font-semibold text-lg" onPress={() => {            
+            router.replace('/novo-lancamento')
+          }} />
+
         </View>
       </ThemedView>
     </>
