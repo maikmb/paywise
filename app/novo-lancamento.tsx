@@ -10,6 +10,7 @@ import { Lancamento } from '@/domain/Lancamento';
 import { Text, TouchableOpacity } from 'react-native';
 import { format } from 'date-fns';
 import { Categorias } from '@/constants/Categorias';
+import uuid from 'react-native-uuid';
 
 export default function HomeScreen() {
   const lancamentoRepository = new LancamentoRepository();
@@ -25,7 +26,7 @@ export default function HomeScreen() {
       return;
     }
     try {
-      const novoLancamento = new Lancamento(titulo, parseFloat(valor.replace(/\D/g, '')) / 100, categoria, dataPagamento);
+      const novoLancamento = new Lancamento(uuid.v4().toString(), titulo, parseFloat(valor.replace(/\D/g, '')) / 100, categoria, dataPagamento);
       novoLancamento.validarCampos();
       lancamentoRepository.create(novoLancamento);
       router.replace('/');

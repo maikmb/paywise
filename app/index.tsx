@@ -1,12 +1,11 @@
-import { Link, Stack, router } from 'expo-router';
-import { Button, StyleSheet, Text, View, ScrollView, Animated, TouchableOpacity } from 'react-native';
+import { Stack, router } from 'expo-router';
+import { Button, StyleSheet, View, ScrollView, Animated, TouchableOpacity } from 'react-native';
 import { ThemedView } from '@/components/ThemedView';
 import { useState, useEffect, useRef } from 'react';
 import { Lancamento } from '@/domain/Lancamento';
 import { LancamentoRepository } from '@/infra/repository/LancamentoRepository';
 import { ThemedText } from '@/components/ThemedText';
 import { Picker } from '@react-native-picker/picker';
-import { Ionicons } from '@expo/vector-icons';
 import { Meses } from '@/constants/Meses';
 import { formatarMoeda } from '@/helpers/FormatarMoeda';
 
@@ -16,30 +15,24 @@ export default function HomeScreen() {
   const [lancamentos, setLancamentos] = useState<Lancamento[]>([]);
   const [mesSelecionado, setMesSelecionado] = useState<string>(new Date().getMonth().toString());
 
-  useEffect(() => {
-    const lancamentosObtidos = lancamentoRepository.getAll();
-    const lancamentosFiltrados = lancamentosObtidos.filter(lancamento => new Date(lancamento.dataPagamento).getMonth().toString() === mesSelecionado);
-    setLancamentos(lancamentosFiltrados);
-    const total = lancamentosFiltrados.reduce((acc, lancamento) => acc + lancamento.valor, 0);
-    setTotalLancamentos(total);
-  }, [mesSelecionado]);
+  useEffect(() => {    
+    const lancamentosFiltrados = lancamentoRepository
+      .getAll()
+      .filter(lancamento => new Date(lancamento.dataPagamento).getMonth().toString() === mesSelecionado);
 
-  const handleRemove = (index: number) => {
-    const novosLancamentos = [...lancamentos];
-    novosLancamentos.splice(index, 1);
-    setLancamentos(novosLancamentos);
-    const total = novosLancamentos.reduce((acc, lancamento) => acc + lancamento.valor, 0);
-    setTotalLancamentos(total);
-  };
+    setLancamentos(lancamentosFiltrados);
+    setTotalLancamentos(lancamentosFiltrados.reduce((acc, lancamento) => acc + lancamento.valor, 0));
+  }, [mesSelecionado]);
 
   return (
     <>
       <Stack.Screen
         options={{
           title: 'Paywise',
-          headerTitleStyle: { 
+          headerTitleStyle: {
             fontFamily: 'NunitoBold',
-          fontSize: 18 },
+            fontSize: 18
+          },
           headerRight: () => (
             <Picker
               selectedValue={mesSelecionado}
@@ -63,15 +56,16 @@ export default function HomeScreen() {
         </View>
         <ScrollView style={styles.lancamentosContainer}>
           {lancamentos.map((lancamento, index) => (
-            <View key={index} style={styles.lancamentoItem}>
+            <TouchableOpacity key={index} style={styles.lancamentoItem} onPress={() => {
+              // Navegar para a página "detalhes-lancamento"
+              debugger
+              router.push({ pathname: '/detalhes-lancamento', params: { id: lancamento.id, titulo: lancamento.titulo } })
+            }}>
               <View style={styles.lancamentoInfo}>
                 <ThemedText type="defaultSemiBold" style={styles.lancamentoTitulo}>{lancamento.titulo}</ThemedText>
                 <ThemedText type="default" style={styles.lancamentoValor}>{formatarMoeda(lancamento.valor)}</ThemedText>
-              </View>
-              <TouchableOpacity onPress={() => handleRemove(index)}>
-                <Ionicons name="trash" size={18} color="#000" />
-              </TouchableOpacity>
-            </View>
+              </View>              
+            </TouchableOpacity>
           ))}
         </ScrollView>
         <View style={styles.buttonContainer}>

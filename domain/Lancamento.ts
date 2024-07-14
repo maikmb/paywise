@@ -1,18 +1,32 @@
 export class Lancamento {
+    id: string;
     titulo: string;
     valor: number;
     categoria: string;
     dataPagamento: Date;
     criadoEm: Date;
-    
-    constructor(titulo: string, valor: number, categoria: string, dataPagamento: Date) {
-        this.titulo = titulo;
-        this.valor = valor;
-        this.categoria = categoria;
-        this.dataPagamento = dataPagamento;
+    pagamentoRealizado: boolean;
+
+    constructor() {
+        this.id = '';
+        this.titulo = '';
+        this.valor = 0;
+        this.categoria = '';
+        this.dataPagamento = new Date();
         this.criadoEm = new Date();
-        this.validarCampos();
+        this.pagamentoRealizado = false;
     }
+
+    // constructor(id: string, titulo: string, valor: number, categoria: string, dataPagamento: Date) {
+    //     this.id = id;
+    //     this.titulo = titulo;
+    //     this.valor = valor;
+    //     this.categoria = categoria;
+    //     this.dataPagamento = dataPagamento;
+    //     this.criadoEm = new Date();
+    //     this.pagamentoRealizado = false;
+    //     this.validarCampos();
+    // }
 
     public validarCampos(): void {
         if (!this.titulo || this.titulo.trim() === "") {
@@ -21,5 +35,34 @@ export class Lancamento {
         if (this.valor <= 0) {
             throw new Error("O valor deve ser maior que 0.");
         }
+    }
+
+    public realizarPagamento() {
+        this.pagamentoRealizado = true;
+    }
+
+    public static create(id: string, titulo: string, valor: number, categoria: string, dataPagamento: Date) {
+        var lancamento = new Lancamento()
+        lancamento.id = id;
+        lancamento.titulo = titulo;
+        lancamento.valor = valor;
+        lancamento.categoria = categoria;
+        lancamento.dataPagamento = dataPagamento;
+        lancamento.criadoEm = new Date();
+        lancamento.pagamentoRealizado = false;
+        lancamento.validarCampos();
+        return lancamento;
+    }
+
+    public static fromJSON(json: any) {
+        var lancamento = new Lancamento()
+        lancamento.id = json.id;
+        lancamento.titulo = json.titulo;
+        lancamento.valor = json.valor;
+        lancamento.categoria = json.categoria;
+        lancamento.dataPagamento = json.dataPagamento;
+        lancamento.criadoEm = json.criadoEm;
+        lancamento.pagamentoRealizado = json.pagamentoRealizado;        
+        return lancamento;
     }
 }

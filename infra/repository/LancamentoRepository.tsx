@@ -16,17 +16,13 @@ export class LancamentoRepository {
         const lancamentos = this.loadFromLocalStorage();
         lancamentos.push(lancamento);
         this.saveToLocalStorage(lancamentos);
-        return lancamento;
+        return Lancamento.fromJSON(lancamento);
     }
+    
 
-    read(titulo: string): Lancamento | undefined {
+    update(updatedLancamento: Lancamento): Lancamento | undefined {
         const lancamentos = this.loadFromLocalStorage();
-        return lancamentos.find(lancamento => lancamento.titulo === titulo);
-    }
-
-    update(titulo: string, updatedLancamento: Lancamento): Lancamento | undefined {
-        const lancamentos = this.loadFromLocalStorage();
-        const index = lancamentos.findIndex(lancamento => lancamento.titulo === titulo);
+        const index = lancamentos.findIndex(lancamento => lancamento.id === updatedLancamento.id);
         if (index !== -1) {
             lancamentos[index] = updatedLancamento;
             this.saveToLocalStorage(lancamentos);
@@ -35,9 +31,9 @@ export class LancamentoRepository {
         return undefined;
     }
 
-    delete(titulo: string): boolean {
+    delete(id: string): boolean {
         const lancamentos = this.loadFromLocalStorage();
-        const index = lancamentos.findIndex(lancamento => lancamento.titulo === titulo);
+        const index = lancamentos.findIndex(lancamento => lancamento.id === id);
         if (index !== -1) {
             lancamentos.splice(index, 1);
             this.saveToLocalStorage(lancamentos);
@@ -47,6 +43,13 @@ export class LancamentoRepository {
     }
 
     getAll(): Lancamento[] {
-        return this.loadFromLocalStorage();
+        var lancamentos = this.loadFromLocalStorage();
+        return lancamentos.map(Lancamento.fromJSON);
+    }
+
+    getById(id: string): Lancamento | undefined {
+        var lancamentos = this.loadFromLocalStorage()
+        const lancamento = lancamentos.find(lancamento => lancamento.id === id);
+        return Lancamento.fromJSON(lancamento);
     }
 }
