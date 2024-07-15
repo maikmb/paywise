@@ -1,5 +1,5 @@
 import { Stack, router } from 'expo-router';
-import { StyleSheet, View, ScrollView, Animated, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, ScrollView, Button, TouchableOpacity } from 'react-native';
 import { ThemedView } from '@/components/ThemedView';
 import { useState, useEffect, useRef } from 'react';
 import { Lancamento } from '@/domain/Lancamento';
@@ -8,7 +8,6 @@ import { ThemedText } from '@/components/ThemedText';
 import { Picker } from '@react-native-picker/picker';
 import { Meses } from '@/constants/Meses';
 import { formatarMoeda } from '@/helpers/FormatarMoeda';
-import { Button } from '@/components/Button';
 
 export default function HomeScreen() {
   const lancamentoRepository = new LancamentoRepository();
@@ -50,9 +49,9 @@ export default function HomeScreen() {
         }}
       />
       <ThemedView style={styles.container}>
-        <View style={styles.header} className='bg-slate-600'>          
-            {formatarMoeda(totalLancamentos)}          
-        </View>
+        <ThemedText align='center' type='title'  style={styles.saldo}>
+          {formatarMoeda(totalLancamentos)}
+        </ThemedText>
         <ScrollView style={styles.lancamentosContainer}>
           {lancamentos.map((lancamento, index) => (
             <TouchableOpacity key={index} style={styles.lancamentoItem} onPress={() => {
@@ -69,7 +68,7 @@ export default function HomeScreen() {
         </ScrollView>
         <View style={styles.buttonContainer}>
 
-          <Button label="Incluir lançamento" size="lg" labelClasses="font-semibold text-lg" onPress={() => {            
+          <Button title='Incluir lançamento' onPress={() => {
             router.replace('/novo-lancamento')
           }} />
 
@@ -93,9 +92,10 @@ const styles = StyleSheet.create({
     borderWidth: 0,
     fontFamily: 'NunitoBold'
   },
-  header: {
+  saldo: {
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 30,
+    marginTop: 30
   },
   totalValue: {
     color: '#000000', // Fonte de cor preta

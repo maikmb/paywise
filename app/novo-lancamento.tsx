@@ -26,7 +26,7 @@ export default function HomeScreen() {
       return;
     }
     try {
-      const novoLancamento = new Lancamento(uuid.v4().toString(), titulo, parseFloat(valor.replace(/\D/g, '')) / 100, categoria, dataPagamento);
+      const novoLancamento = Lancamento.create(uuid.v4().toString(), titulo, parseFloat(valor.replace(/\D/g, '')) / 100, categoria, dataPagamento);
       novoLancamento.validarCampos();
       lancamentoRepository.create(novoLancamento);
       router.replace('/');

@@ -11,13 +11,11 @@ import { formatarMoeda } from '@/helpers/FormatarMoeda';
 import { Ionicons } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import AcaoItem from '@/components/AcaoItem';
-import { useToast } from '@/components/Toast';
 
 export default function DetalhesLancamento() {
   const lancamentoRepository = new LancamentoRepository();
   const [lancamento, setLancamento] = useState<Lancamento>();
   const params = useLocalSearchParams();
-  const { toast } = useToast();
 
   useEffect(() => {
     if (params.id) {
@@ -28,15 +26,16 @@ export default function DetalhesLancamento() {
   const onClickMarcarPago = (lancamento: Lancamento) => {
     debugger
     lancamento.realizarPagamento();
-    lancamentoRepository.update(lancamento)
-    toast('Lançamento marcado como pago!', 'success', 4000);
-    router.replace('/');
+    lancamentoRepository.update(lancamento);
+    alert('Lançamento marcado como pago!');
+    router.navigate('/');
   };
 
   const onClickExcluir = (id: string) => {
-    lancamentoRepository.delete(id);
-    toast('Lançamento excluído!', 'success', 4000);
-    router.replace('/');
+    if (confirm('Deseja realmente excluir este lançamento?')) {
+      lancamentoRepository.delete(id);
+      router.navigate('/');
+    }
   };
 
   return (
@@ -51,8 +50,11 @@ export default function DetalhesLancamento() {
       <ThemedView style={styles.container}>
         {lancamento ? (
           <>
-            <View>
-              <ThemedText type="title" style={styles.headerText}>{lancamento.titulo}</ThemedText>
+            <View style={styles.resumo}>
+              <ThemedText type="title" style={styles.headerText}>
+                {lancamento.titulo}
+              </ThemedText>
+              {lancamento.pagamentoRealizado ? <ThemedText align='center' type="defaultSemiBold" style={styles.bagdePago}>Pago</ThemedText> : undefined}
             </View>
 
             <View style={styles.detalheItem}>
@@ -94,12 +96,16 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5F5F5',
     alignItems: 'center'
   },
-  headerText: {
+  resumo: {
     marginTop: 50,
-    marginBottom: 50,
+    marginBottom: 100,
+    alignItems: 'center'
+  },
+  headerText: {
     color: '#000',
     fontFamily: 'NunitoBold',
-    textAlign: 'center'
+    textAlign: 'center',
+    marginBottom: 20
   },
   acoesContainer: {
     position: 'absolute',
@@ -118,5 +124,14 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     borderBottomColor: '#c6c6c6',
     borderBottomWidth: 0.5
+  },
+  bagdePago: {
+    backgroundColor: '#a7f3d7',
+    borderRadius: 10,
+    borderColor: '#45a280',
+    borderWidth: 0.5,
+    width: 60,
+    fontSize: 12,
+    padding: 0
   }
 });
