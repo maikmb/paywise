@@ -1,5 +1,5 @@
 import { Stack, router } from 'expo-router';
-import { StyleSheet, View, ScrollView, Button, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { ThemedView } from '@/components/ThemedView';
 import { useState, useEffect, useRef } from 'react';
 import { Lancamento } from '@/domain/Lancamento';
@@ -8,6 +8,8 @@ import { ThemedText } from '@/components/ThemedText';
 import { Picker } from '@react-native-picker/picker';
 import { Meses } from '@/constants/Meses';
 import { formatarMoeda } from '@/helpers/FormatarMoeda';
+import { isEmpty } from 'lodash';
+import Button from '@/components/Button';
 
 export default function HomeScreen() {
   const lancamentoRepository = new LancamentoRepository();
@@ -49,29 +51,31 @@ export default function HomeScreen() {
         }}
       />
       <ThemedView style={styles.container}>
-        <ThemedText align='center' type='title'  style={styles.saldo}>
-          {formatarMoeda(totalLancamentos)}
-        </ThemedText>
-        <ScrollView style={styles.lancamentosContainer}>
-          {lancamentos.map((lancamento, index) => (
-            <TouchableOpacity key={index} style={styles.lancamentoItem} onPress={() => {
-              // Navegar para a página "detalhes-lancamento"
-              debugger
-              router.push({ pathname: '/detalhes-lancamento', params: { id: lancamento.id, titulo: lancamento.titulo } })
-            }}>
-              <View style={styles.lancamentoInfo}>
-                <ThemedText type="defaultSemiBold" style={styles.lancamentoTitulo}>{lancamento.titulo}</ThemedText>
-                <ThemedText type="default" style={styles.lancamentoValor}>{formatarMoeda(lancamento.valor)}</ThemedText>
-              </View>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
+        {!isEmpty(lancamentos) ? <>
+          <ThemedText align='center' type='title' style={styles.saldo}>
+            {formatarMoeda(totalLancamentos)}
+          </ThemedText>
+          <ScrollView style={styles.lancamentosContainer}>
+            {lancamentos.map((lancamento, index) => (
+              <TouchableOpacity key={index} style={styles.lancamentoItem} onPress={() => {
+                // Navegar para a página "detalhes-lancamento"
+                router.push({ pathname: '/detalhes-lancamento', params: { id: lancamento.id, titulo: lancamento.titulo } })
+              }}>
+                <View style={styles.lancamentoInfo}>
+                  <ThemedText type="defaultSemiBold" style={styles.lancamentoTitulo}>{lancamento.titulo}</ThemedText>
+                  <ThemedText type="default" style={styles.lancamentoValor}>{formatarMoeda(lancamento.valor)}</ThemedText>
+                </View>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </> : <>
+          <ThemedText align='center' type="defaultSemiBold" style={styles.saldo}>Você ainda não tem lembretes de pagamentos cadastrados. Que tal começar agora?</ThemedText>
+          <Image style={styles.pagamentosVazio} source={require('@/assets/illustrations/empty.svg')} />
+        </>}
         <View style={styles.buttonContainer}>
-
           <Button title='Incluir lançamento' onPress={() => {
             router.replace('/novo-lancamento')
           }} />
-
         </View>
       </ThemedView>
     </>
@@ -83,6 +87,11 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     backgroundColor: '#f2f4f5', // Cor clara cinza
+    alignItems: 'center'
+  },
+  pagamentosVazio: {
+    height: 300,
+    width: 300
   },
   picker: {
     marginRight: 5,
@@ -134,6 +143,8 @@ const styles = StyleSheet.create({
     fontSize: 12
   },
   buttonContainer: {
+    display: 'flex',
+    flexDirection: 'column',
     marginTop: 20,
     alignItems: 'center',
   },
