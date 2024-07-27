@@ -10,21 +10,56 @@ import { Meses } from '@/constants/Meses';
 import { formatarMoeda } from '@/helpers/FormatarMoeda';
 import { isEmpty } from 'lodash';
 import Button from '@/components/Button';
+import uuid from 'react-native-uuid';
 
 export default function HomeScreen() {
   const lancamentoRepository = new LancamentoRepository();
   const [totalLancamentos, setTotalLancamentos] = useState<number>(0);
   const [lancamentos, setLancamentos] = useState<Lancamento[]>([]);
-  const [mesSelecionado, setMesSelecionado] = useState<string>(new Date().getMonth().toString());
+  const [mesSelecionado, setMesSelecionado] = useState<number>(new Date().getMonth() + 1);
 
   useEffect(() => {
-    const lancamentosFiltrados = lancamentoRepository
-      .getAll()
-      .filter(lancamento => new Date(lancamento.dataPagamento).getMonth().toString() === mesSelecionado);
+    debugger
+    getLancamentos();
+  }, [mesSelecionado]);
+
+  const getLancamentos = () => {
+    debugger
+    const dbLancamentos = lancamentoRepository.getAll();
+    const lancamentosFiltrados = dbLancamentos
+      .filter(lancamento => {
+        if (!lancamento.dataPagamento) return;
+        debugger
+        const dataPagamento = new Date(lancamento.dataPagamento)
+        return (dataPagamento.getMonth() + 1) === mesSelecionado
+      });
 
     setLancamentos(lancamentosFiltrados);
     setTotalLancamentos(lancamentosFiltrados.reduce((acc, lancamento) => acc + lancamento.valor, 0));
-  }, [mesSelecionado]);
+  }
+
+  const onCopiarMesAnterior = () => {
+    debugger
+    const mesAnterior = mesSelecionado - 1;
+
+    const mesAnteriorFiltrados = lancamentoRepository
+      .getAll()
+      .filter(lancamento => (new Date(lancamento.dataPagamento).getMonth() + 1) === mesAnterior)
+      .map(lancamento => {
+        debugger
+        lancamento.id = uuid.v4().toString();
+        lancamento.dataPagamento = new Date(new Date(lancamento.dataPagamento).setMonth(mesSelecionado - 1));
+        return lancamento
+      });
+
+    if (mesAnteriorFiltrados.length === 0) {
+      window.alert('Não existe dados para o mês anterior');
+      return;
+    }
+
+    mesAnteriorFiltrados.forEach(lancamento => lancamentoRepository.create(lancamento));
+    getLancamentos();
+  }
 
   return (
     <>
@@ -39,7 +74,7 @@ export default function HomeScreen() {
             <Picker
               selectedValue={mesSelecionado}
               style={styles.picker}
-              onValueChange={(itemValue) => setMesSelecionado(itemValue)}
+              onValueChange={(itemValue) => setMesSelecionado(Number(itemValue))}
               mode="dropdown"
               dropdownIconColor="#4CAF50"
             >
@@ -76,6 +111,10 @@ export default function HomeScreen() {
           <Button title='Incluir lançamento' onPress={() => {
             router.replace('/novo-lancamento')
           }} />
+          {isEmpty(lancamentos) && (<>
+            <ThemedText align='center' type="defaultSemiBold" style={styles.saldo}>ou se preferir você pode copiar seus pagamentos do mês anterior</ThemedText>
+            <Button title='Copiar do mês anterior' onPress={() => onCopiarMesAnterior()} />
+          </>)}
         </View>
       </ThemedView>
     </>

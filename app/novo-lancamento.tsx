@@ -8,16 +8,18 @@ import { ThemedView } from '@/components/ThemedView';
 import { LancamentoRepository } from '@/infra/repository/LancamentoRepository';
 import { Lancamento } from '@/domain/Lancamento';
 import { Text, TouchableOpacity } from 'react-native';
-import { format } from 'date-fns';
+import { format, parse } from 'date-fns';
 import { Categorias } from '@/constants/Categorias';
 import uuid from 'react-native-uuid';
+import { MaskedTextInput } from "react-native-mask-text";
+import criarDataAPartirDeString from '@/helpers/criarDataAPartirDeString';
 
 export default function HomeScreen() {
   const lancamentoRepository = new LancamentoRepository();
   const [titulo, setTitulo] = useState('');
   const [categoria, setCategoria] = useState('');
   const [valor, setValor] = useState('');
-  const [dataPagamento, setDataPagamento] = useState(new Date());
+  const [dataPagamento, setDataPagamento] = useState('');
   const [showDatePicker, setShowDatePicker] = useState(false);
 
   const handleSave = () => {
@@ -100,11 +102,15 @@ export default function HomeScreen() {
             <ThemedText type="label">Data de Pagamento</ThemedText>
             {Platform.OS === 'web' ? (
               <TextInput
+                maxLength={10}
                 style={styles.input}
                 placeholder="Selecione a data"
                 value={format(dataPagamento, 'dd/MM/yyyy')}
-                onFocus={() => setShowDatePicker(true)}
-                readOnly
+                onBlur={(el) => {
+                  debugger
+                  const novaDataPagamento = parse(el.nativeEvent.text, 'dd/MM/yyyy', new Date())
+                  handleDateChange(el, novaDataPagamento)
+                }}
               />
             ) : (
               <TouchableOpacity onPress={() => setShowDatePicker(true)}>
@@ -153,7 +159,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
   },
   header: {
-    marginBottom: 20,    
+    marginBottom: 20,
   },
   headerText: {
     color: '#000',

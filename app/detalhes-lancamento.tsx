@@ -1,16 +1,13 @@
-import { Stack, router, useLocalSearchParams } from 'expo-router';
-import { StyleSheet, TextInput, Button, View, ScrollView, Alert, Platform, TouchableOpacity } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
-import { Children, useEffect, useState } from 'react';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import AcaoItem from '@/components/AcaoItem';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import { LancamentoRepository } from '@/infra/repository/LancamentoRepository';
 import { Lancamento } from '@/domain/Lancamento';
 import { formatarMoeda } from '@/helpers/FormatarMoeda';
-import { Ionicons } from '@expo/vector-icons';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import AcaoItem from '@/components/AcaoItem';
+import { LancamentoRepository } from '@/infra/repository/LancamentoRepository';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { Stack, router, useLocalSearchParams } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { StyleSheet, View } from 'react-native';
 
 export default function DetalhesLancamento() {
   const lancamentoRepository = new LancamentoRepository();
