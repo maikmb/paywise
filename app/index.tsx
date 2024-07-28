@@ -106,7 +106,7 @@ export default function HomeScreen() {
         </>}
         <View style={styles.buttonContainer}>
           <Button title='Incluir lançamento' onPress={() => {
-            router.replace('/novo-lancamento')
+            router.push('/novo-lancamento')
           }} />
           {existeLancamentosAnteriores && isEmpty(lancamentos) && (<>
             <ThemedText align='center' type="defaultSemiBold" style={styles.saldo}>ou se preferir você pode copiar seus pagamentos do mês anterior</ThemedText>
