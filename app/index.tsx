@@ -17,23 +17,21 @@ export default function HomeScreen() {
   const [totalLancamentos, setTotalLancamentos] = useState<number>(0);
   const [lancamentos, setLancamentos] = useState<Lancamento[]>([]);
   const [mesSelecionado, setMesSelecionado] = useState<number>(new Date().getMonth() + 1);
+  const [existeLancamentosAnteriores, setExisteLancamentosAnteriores] = useState<boolean>(false);
 
-  useEffect(() => {
-    debugger
-    getLancamentos();
-  }, [mesSelecionado]);
+  useEffect(() => getLancamentos(), [mesSelecionado]);
 
   const getLancamentos = () => {
     debugger
     const dbLancamentos = lancamentoRepository.getAll();
     const lancamentosFiltrados = dbLancamentos
       .filter(lancamento => {
-        if (!lancamento.dataPagamento) return;
-        debugger
+        if (!lancamento.dataPagamento) return false;
         const dataPagamento = new Date(lancamento.dataPagamento)
-        return (dataPagamento.getMonth() + 1) === mesSelecionado
+        return (dataPagamento.getMonth() + 1) === mesSelecionado && dataPagamento.getFullYear() === new Date().getFullYear()
       });
 
+    setExisteLancamentosAnteriores(!isEmpty(dbLancamentos));
     setLancamentos(lancamentosFiltrados);
     setTotalLancamentos(lancamentosFiltrados.reduce((acc, lancamento) => acc + lancamento.valor, 0));
   }
@@ -46,7 +44,6 @@ export default function HomeScreen() {
       .getAll()
       .filter(lancamento => (new Date(lancamento.dataPagamento).getMonth() + 1) === mesAnterior)
       .map(lancamento => {
-        debugger
         lancamento.id = uuid.v4().toString();
         lancamento.dataPagamento = new Date(new Date(lancamento.dataPagamento).setMonth(mesSelecionado - 1));
         return lancamento
@@ -111,7 +108,7 @@ export default function HomeScreen() {
           <Button title='Incluir lançamento' onPress={() => {
             router.replace('/novo-lancamento')
           }} />
-          {isEmpty(lancamentos) && (<>
+          {existeLancamentosAnteriores && isEmpty(lancamentos) && (<>
             <ThemedText align='center' type="defaultSemiBold" style={styles.saldo}>ou se preferir você pode copiar seus pagamentos do mês anterior</ThemedText>
             <Button title='Copiar do mês anterior' onPress={() => onCopiarMesAnterior()} />
           </>)}

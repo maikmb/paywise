@@ -3,9 +3,10 @@ import { Text, StyleSheet, Pressable } from 'react-native';
 
 type Props = PropsWithChildren<{
     title: string;
+    color?: string;
     onPress: () => void;
 }>;
-export default function Button({ title, onPress }: Props) {
+export default function Button({ title, color, onPress }: Props) {
     return (
         <Pressable style={styles.button} onPress={onPress}>
             <Text style={styles.text}>{title}</Text>

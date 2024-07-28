@@ -1,30 +1,36 @@
 import { Stack, router } from 'expo-router';
-import { StyleSheet, TextInput, Button, View, ScrollView, Alert, Platform } from 'react-native';
+import { StyleSheet, TextInput, View, ScrollView, Platform } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { LancamentoRepository } from '@/infra/repository/LancamentoRepository';
 import { Lancamento } from '@/domain/Lancamento';
 import { Text, TouchableOpacity } from 'react-native';
-import { format, parse } from 'date-fns';
+import { format, parse, isValid } from 'date-fns';
 import { Categorias } from '@/constants/Categorias';
 import uuid from 'react-native-uuid';
-import { MaskedTextInput } from "react-native-mask-text";
-import criarDataAPartirDeString from '@/helpers/criarDataAPartirDeString';
+import Button from '@/components/Button';
 
 export default function HomeScreen() {
   const lancamentoRepository = new LancamentoRepository();
-  const [titulo, setTitulo] = useState('');
-  const [categoria, setCategoria] = useState('');
-  const [valor, setValor] = useState('');
-  const [dataPagamento, setDataPagamento] = useState('');
-  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [titulo, setTitulo] = useState<string>('');
+  const [categoria, setCategoria] = useState<string>('');
+  const [valor, setValor] = useState<string>('');
+  const [dataPagamento, setDataPagamento] = useState<Date>(new Date());
+  const [dataPagamentoFormatada, setDataPagamentoFormatada] = useState<string>('');
+  const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
+
+  useEffect(() => {
+    debugger
+    const formattedDataPagamento = format(dataPagamento, 'dd/MM/yyyy');
+    setDataPagamentoFormatada(formattedDataPagamento);
+  }, []);
 
   const handleSave = () => {
     if (!titulo || !categoria || !valor) {
-      Alert.alert('Erro', 'Todos os campos devem ser preenchidos.');
+      window.alert('Todos os campos devem ser preenchidos.');
       return;
     }
     try {
@@ -34,7 +40,7 @@ export default function HomeScreen() {
       router.replace('/');
     } catch (error) {
       const errorMessage = (error as Error).message;
-      Alert.alert('Erro', errorMessage);
+      window.alert(errorMessage);
     }
   };
 
@@ -56,7 +62,16 @@ export default function HomeScreen() {
     setDataPagamento(currentDate);
   };
 
-
+  const formatarDataAoMudarTexto = (input: string) => {
+    let value = input.replace(/\D/g, ''); // Remove tudo que não é dígito
+    if (value.length > 2) {
+      value = value.slice(0, 2) + '/' + value.slice(2);
+    }
+    if (value.length > 5) {
+      value = value.slice(0, 5) + '/' + value.slice(5, 9);
+    }
+    return value;
+  }
 
   return (
     <>
@@ -104,12 +119,15 @@ export default function HomeScreen() {
               <TextInput
                 maxLength={10}
                 style={styles.input}
+                value={dataPagamentoFormatada}
                 placeholder="Selecione a data"
-                value={format(dataPagamento, 'dd/MM/yyyy')}
-                onBlur={(el) => {
-                  debugger
-                  const novaDataPagamento = parse(el.nativeEvent.text, 'dd/MM/yyyy', new Date())
-                  handleDateChange(el, novaDataPagamento)
+                onChangeText={(value) => {
+                  var dataFormatadaTexto = formatarDataAoMudarTexto(value)
+                  const novaDataPagameto = parse(dataFormatadaTexto, 'dd/MM/yyyy', new Date());
+                  setDataPagamentoFormatada(dataFormatadaTexto)
+                  if (isValid(novaDataPagameto)) {
+                    handleDateChange(null, novaDataPagameto);
+                  }
                 }}
               />
             ) : (
@@ -132,13 +150,6 @@ export default function HomeScreen() {
                 title="Salvar"
                 onPress={handleSave}
                 color="#4CAF50"
-              />
-            </View>
-            <View style={styles.button}>
-              <Button
-                title="Cancelar"
-                onPress={handleCancel}
-                color="#F44336"
               />
             </View>
           </View>
