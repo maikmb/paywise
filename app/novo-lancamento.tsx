@@ -12,18 +12,25 @@ import { format, parse, isValid } from 'date-fns';
 import { Categorias } from '@/constants/Categorias';
 import uuid from 'react-native-uuid';
 import Button from '@/components/Button';
+import { extrairValorFinanceiro } from '@/helpers/ExtrairValorFinanceiro';
+import { TipoLancamento } from '@/enums/TipoLancamento';
 
 export default function HomeScreen() {
   const lancamentoRepository = new LancamentoRepository();
   const [titulo, setTitulo] = useState<string>('');
   const [categoria, setCategoria] = useState<string>('');
+  const [tipoLancamento, setTipoLancamento] = useState<string>(TipoLancamento.DESPESA );
   const [valor, setValor] = useState<string>('');
   const [dataPagamento, setDataPagamento] = useState<Date>(new Date());
   const [dataPagamentoFormatada, setDataPagamentoFormatada] = useState<string>('');
   const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
 
+  const tiposLancamentos = [
+    { label: 'Despesa', value: TipoLancamento.DESPESA },
+    { label: 'Receita', value: TipoLancamento.RECEITA }
+  ]
+
   useEffect(() => {
-    debugger
     const formattedDataPagamento = format(dataPagamento, 'dd/MM/yyyy');
     setDataPagamentoFormatada(formattedDataPagamento);
   }, []);
@@ -34,7 +41,11 @@ export default function HomeScreen() {
       return;
     }
     try {
-      const novoLancamento = Lancamento.create(uuid.v4().toString(), titulo, parseFloat(valor.replace(/\D/g, '')) / 100, categoria, dataPagamento);
+      const id = uuid.v4().toString();
+
+      const novoLancamento = Lancamento
+        .create(id, titulo, extrairValorFinanceiro(valor), categoria, dataPagamento, tipoLancamento);
+
       novoLancamento.validarCampos();
       lancamentoRepository.create(novoLancamento);
       router.replace('/');
@@ -143,6 +154,16 @@ export default function HomeScreen() {
                 onChange={handleDateChange}
               />
             )}
+            <ThemedText type="label">Tipo de Lançamento</ThemedText>
+            <Picker
+              selectedValue={tipoLancamento}
+              style={styles.input}
+              onValueChange={(itemValue: string) => setTipoLancamento(itemValue)}
+            >
+              {tiposLancamentos.map((categoria, index) => (
+                <Picker.Item key={index} label={categoria.label} value={categoria.value} />
+              ))}
+            </Picker>
           </View>
           <View style={styles.buttonContainer}>
             <View style={styles.button}>

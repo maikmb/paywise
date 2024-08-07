@@ -6,6 +6,7 @@ export class Lancamento {
     dataPagamento: Date;
     criadoEm: Date;
     pagamentoRealizado: boolean;
+    tipoLancamento: string;
 
     constructor() {
         this.id = '';
@@ -15,12 +16,18 @@ export class Lancamento {
         this.dataPagamento = new Date();
         this.criadoEm = new Date();
         this.pagamentoRealizado = false;
+        this.tipoLancamento = '';
     }
 
     public validarCampos(): void {
         if (!this.titulo || this.titulo.trim() === "") {
             throw new Error("O campo título não pode ser em branco.");
         }
+
+        if (!this.tipoLancamento) {
+            throw new Error("O tipo lancamento não pode ser em branco.");
+        }
+
         if (this.valor <= 0) {
             throw new Error("O valor deve ser maior que 0.");
         }
@@ -30,7 +37,7 @@ export class Lancamento {
         this.pagamentoRealizado = true;
     }
 
-    public static create(id: string, titulo: string, valor: number, categoria: string, dataPagamento: Date) {
+    public static create(id: string, titulo: string, valor: number, categoria: string, dataPagamento: Date, tipoLancamento: string) {
         var lancamento = new Lancamento()
         lancamento.id = id;
         lancamento.titulo = titulo;
@@ -39,6 +46,7 @@ export class Lancamento {
         lancamento.dataPagamento = dataPagamento;
         lancamento.criadoEm = new Date();
         lancamento.pagamentoRealizado = false;
+        lancamento.tipoLancamento = tipoLancamento;
         lancamento.validarCampos();
         return lancamento;
     }
