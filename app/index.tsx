@@ -19,10 +19,12 @@ export default function HomeScreen() {
   const [totalReceita, setTotalReceita] = useState<number>(0);
   const [totalLiquido, setTotalLiquido] = useState<number>(0);
   const [lancamentosDespesas, setLancamentosDespesas] = useState<Lancamento[]>([]);
+  const [lancamentosReceitas, setLancamentosReceitas] = useState<Lancamento[]>([]);
   const [mesSelecionado, setMesSelecionado] = useState<number>(new Date().getMonth() + 1);
   const [existeLancamentosAnteriores, setExisteLancamentosAnteriores] = useState<boolean>(false);
 
   useEffect(() => {
+    debugger
     getTodasDespesas()
     getTodasReceitas()
   }, [mesSelecionado]);
@@ -43,6 +45,7 @@ export default function HomeScreen() {
       });
 
     setTotalReceita(receitasDoMes.reduce((acc, lancamento) => acc + lancamento.valor, 0));
+    setLancamentosReceitas(receitasDoMes);
   };
 
   const getTodasDespesas = () => {
@@ -82,7 +85,7 @@ export default function HomeScreen() {
     }
 
     mesAnteriorFiltrados.forEach(lancamento => lancamentoRepository.create(lancamento));
-    getTodasDespesas()();
+    getTodasDespesas();
   }
 
   return (
@@ -110,35 +113,68 @@ export default function HomeScreen() {
         }}
       />
       <ThemedView style={styles.container}>
-        {!isEmpty(lancamentosDespesas) ? <>
-          <ThemedText align='center' type='title' style={styles.saldo}>
-            {formatarMoeda(totalDespesas)}
-          </ThemedText>
-          <ScrollView style={styles.lancamentosContainer}>
-            {lancamentosDespesas.map((lancamento, index) => (
-              <TouchableOpacity key={index} style={styles.lancamentoItem} onPress={() => {
-                // Navegar para a página "detalhes-lancamento"
-                router.push({ pathname: '/detalhes-lancamento', params: { id: lancamento.id, titulo: lancamento.titulo } })
-              }}>
-                <View style={styles.lancamentoInfo}>
-                  <ThemedText type="defaultSemiBold" style={styles.lancamentoTitulo}>{lancamento.titulo}</ThemedText>
-                  <ThemedText type="default" style={styles.lancamentoValor}>{formatarMoeda(lancamento.valor)}</ThemedText>
-                </View>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-        </> : <>
-          <ThemedText align='center' type="defaultSemiBold" style={styles.saldo}>Você ainda não tem lembretes de pagamentos cadastrados. Que tal começar agora?</ThemedText>
-          <Image style={styles.pagamentosVazio} source={require('@/assets/illustrations/empty.svg')} />
-        </>}
+        {!isEmpty(lancamentosDespesas) ?
+          <>
+            <View style={styles.saldoContainer}>
+              <ThemedText align='left' type='title'>
+                Saldo total
+              </ThemedText>
+              <ThemedText align='left' type='title' style={styles.saldo}>
+                {formatarMoeda(totalLiquido)}
+              </ThemedText>
+            </View>
+            <View>
+              <ThemedText type='default' style={styles.tipoLancamentos}>
+                📈 Receitas: {formatarMoeda(totalReceita)}
+              </ThemedText>
+              <ScrollView style={styles.lancamentosContainer}>
+                {lancamentosReceitas.map((lancamento, index) => (
+                  <TouchableOpacity key={index} style={styles.lancamentoItem} onPress={() => {
+                    // Navegar para a página "detalhes-lancamento"
+                    router.push({ pathname: '/detalhes-lancamento', params: { id: lancamento.id, titulo: lancamento.titulo } })
+                  }}>
+                    <View style={styles.lancamentoInfo}>
+                      <ThemedText type="defaultSemiBold" style={styles.lancamentoTitulo}>{lancamento.titulo}</ThemedText>
+                      <ThemedText type="default" style={styles.lancamentoValor}>{formatarMoeda(lancamento.valor)}</ThemedText>
+                    </View>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+            </View>
+            <View>
+              <ThemedText type='default' style={styles.tipoLancamentos}>
+                📉 Despesas: {formatarMoeda(totalDespesas)}
+              </ThemedText>
+              <ScrollView style={styles.lancamentosContainer}>
+                {lancamentosDespesas.map((lancamento, index) => (
+                  <TouchableOpacity key={index} style={styles.lancamentoItem} onPress={() => {
+                    // Navegar para a página "detalhes-lancamento"
+                    router.push({ pathname: '/detalhes-lancamento', params: { id: lancamento.id, titulo: lancamento.titulo } })
+                  }}>
+                    <View style={styles.lancamentoInfo}>
+                      <ThemedText type="defaultSemiBold" style={styles.lancamentoTitulo}>{lancamento.titulo}</ThemedText>
+                      <ThemedText type="default" style={styles.lancamentoValor}>{formatarMoeda(lancamento.valor)}</ThemedText>
+                    </View>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+            </View>
+          </> :
+          <View style={styles.pagamentosVazioContainer}>
+            <ThemedText align='center' type="defaultSemiBold">Você ainda não tem lembretes de pagamentos cadastrados. Que tal começar agora?</ThemedText>
+            <Image style={styles.pagamentosVazio} source={require('@/assets/illustrations/empty.svg')} />
+          </View>
+        }
         <View style={styles.buttonContainer}>
           <Button title='Incluir lançamento' onPress={() => {
             router.push('/novo-lancamento')
           }} />
-          {existeLancamentosAnteriores && isEmpty(lancamentosDespesas) && (<>
-            <ThemedText align='center' type="defaultSemiBold" style={styles.saldo}>ou se preferir você pode copiar seus pagamentos do mês anterior</ThemedText>
-            <Button title='Copiar do mês anterior' onPress={() => onCopiarMesAnterior()} />
-          </>)}
+          {existeLancamentosAnteriores && isEmpty(lancamentosDespesas) && (
+            <>
+              <ThemedText align='center' type="defaultSemiBold" style={styles.textoCopiarLancamentos}>ou se preferir você pode copiar seus pagamentos do mês anterior</ThemedText>
+              <Button title='Copiar do mês anterior' onPress={() => onCopiarMesAnterior()} />
+            </>
+          )}
         </View>
       </ThemedView>
     </>
@@ -150,7 +186,6 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     backgroundColor: '#f2f4f5', // Cor clara cinza
-    alignItems: 'center'
   },
   pagamentosVazio: {
     height: 300,
@@ -164,10 +199,22 @@ const styles = StyleSheet.create({
     borderWidth: 0,
     fontFamily: 'NunitoBold'
   },
-  saldo: {
-    alignItems: 'center',
+  tipoLancamentos: {
+    color: '#000000', // Fonte de cor preta
+    fontSize: 14,
+    fontWeight: 'bold',
+    fontFamily: 'NunitoBold',
+    marginTop: 10,
+    marginBottom: 10
+  },
+  saldoContainer: {
     marginBottom: 30,
     marginTop: 30
+  },
+  saldo: {
+    alignItems: 'center',
+    marginTop: 10,
+    marginBottom: 30
   },
   totalValue: {
     color: '#000000', // Fonte de cor preta
@@ -215,5 +262,16 @@ const styles = StyleSheet.create({
     marginTop: 15,
     paddingVertical: 15,
   },
+  pagamentosVazioContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    maxWidth: 500,
+  },
+  textoCopiarLancamentos: {
+    marginBottom: 20,
+    marginTop: 20
+  }
 });
 

@@ -19,7 +19,7 @@ export default function HomeScreen() {
   const lancamentoRepository = new LancamentoRepository();
   const [titulo, setTitulo] = useState<string>('');
   const [categoria, setCategoria] = useState<string>('');
-  const [tipoLancamento, setTipoLancamento] = useState<string>(TipoLancamento.DESPESA );
+  const [tipoLancamento, setTipoLancamento] = useState<string>(TipoLancamento.DESPESA);
   const [valor, setValor] = useState<string>('');
   const [dataPagamento, setDataPagamento] = useState<Date>(new Date());
   const [dataPagamentoFormatada, setDataPagamentoFormatada] = useState<string>('');
@@ -36,17 +36,21 @@ export default function HomeScreen() {
   }, []);
 
   const handleSave = () => {
+    debugger
     if (!titulo || !categoria || !valor) {
       window.alert('Todos os campos devem ser preenchidos.');
       return;
     }
-    try {
-      const id = uuid.v4().toString();
-
-      const novoLancamento = Lancamento
-        .create(id, titulo, extrairValorFinanceiro(valor), categoria, dataPagamento, tipoLancamento);
-
-      novoLancamento.validarCampos();
+    try {      
+      const lancamentoRequest = {
+        id: uuid.v4().toString(),
+        titulo: titulo,
+        valor: extrairValorFinanceiro(valor),
+        categoria: categoria,
+        dataPagamento: dataPagamento,
+        tipoLancamento: tipoLancamento
+      }
+      const novoLancamento = Lancamento.create(lancamentoRequest);
       lancamentoRepository.create(novoLancamento);
       router.replace('/');
     } catch (error) {

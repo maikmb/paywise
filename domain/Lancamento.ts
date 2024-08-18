@@ -37,20 +37,20 @@ export class Lancamento {
         this.pagamentoRealizado = true;
     }
 
-    public static create(id: string, titulo: string, valor: number, categoria: string, dataPagamento: Date, tipoLancamento: string) {
+    public static create(lancamentoRequest: any) {
         var lancamento = new Lancamento()
-        lancamento.id = id;
-        lancamento.titulo = titulo;
-        lancamento.valor = valor;
-        lancamento.categoria = categoria;
-        lancamento.dataPagamento = dataPagamento;
+        lancamento.id = lancamentoRequest.id;
+        lancamento.titulo = lancamentoRequest.titulo;
+        lancamento.valor = lancamentoRequest.valor;
+        lancamento.categoria = lancamentoRequest.categoria;
+        lancamento.dataPagamento = lancamentoRequest.dataPagamento;
+        lancamento.tipoLancamento = lancamentoRequest.tipoLancamento;        
         lancamento.criadoEm = new Date();
         lancamento.pagamentoRealizado = false;
-        lancamento.tipoLancamento = tipoLancamento;
         lancamento.validarCampos();
-        return lancamento;
+        return lancamento;  
     }
-
+    
     public static fromJSON(json: any) {
         var lancamento = new Lancamento()
         lancamento.id = json.id;
@@ -58,8 +58,9 @@ export class Lancamento {
         lancamento.valor = json.valor;
         lancamento.categoria = json.categoria;
         lancamento.dataPagamento = json.dataPagamento;
+        lancamento.tipoLancamento = json.tipoLancamento;
         lancamento.criadoEm = json.criadoEm;
-        lancamento.pagamentoRealizado = json.pagamentoRealizado;        
+        lancamento.pagamentoRealizado = json.pagamentoRealizado;   
         return lancamento;
     }
 }
