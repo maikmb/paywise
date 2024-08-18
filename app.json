@@ -4,7 +4,7 @@
     "slug": "paywise",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/app-insights/logo-main.png",
+    "icon": "./assets/app-insights/logo-main.jpg",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
@@ -17,7 +17,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/app-insights/logo-main.png",
+        "foregroundImage": "./assets/app-insights/logo-main.jpg",
         "backgroundColor": "#d9d9d9"
       }
     },
