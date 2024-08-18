@@ -52,7 +52,7 @@ export default function HomeScreen() {
       }
       const novoLancamento = Lancamento.create(lancamentoRequest);
       lancamentoRepository.create(novoLancamento);
-      router.replace('/');
+      router.navigate('/');
     } catch (error) {
       const errorMessage = (error as Error).message;
       window.alert(errorMessage);

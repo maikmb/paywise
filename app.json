@@ -9,8 +9,8 @@
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/app-insights/spash1.jpg",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "resizeMode": "contain",      
+      "backgroundColor": "#426ff5"
     },
     "ios": {
       "supportsTablet": true
@@ -18,10 +18,10 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/app-insights/logo.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#426ff5"
       }
     },
-    "web": {
+    "web": {      
       "bundler": "metro",
       "output": "static",
       "favicon": "./assets/app-insights/logo.png"

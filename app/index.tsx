@@ -49,7 +49,6 @@ export default function HomeScreen() {
   };
 
   const getTodasDespesas = () => {
-    debugger
     const dbLancamentos = lancamentoRepository.getAll();
     const lancamentosFiltrados = dbLancamentos
       .filter(lancamento => {
@@ -66,9 +65,7 @@ export default function HomeScreen() {
   }
 
   const onCopiarMesAnterior = () => {
-    debugger
     const mesAnterior = mesSelecionado - 1;
-
     const mesAnteriorFiltrados = lancamentoRepository
       .getAll()
       .filter(lancamento => (new Date(lancamento.dataPagamento).getMonth() + 1) === mesAnterior)
