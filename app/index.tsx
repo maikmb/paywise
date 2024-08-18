@@ -113,8 +113,8 @@ export default function HomeScreen() {
         }}
       />
       <ThemedView style={styles.container}>
-        {!isEmpty(lancamentosDespesas) ?
-          <>
+        {!isEmpty(lancamentosDespesas) || !isEmpty(lancamentosReceitas) ?
+          <ScrollView>
             <View style={styles.saldoContainer}>
               <ThemedText align='left' type='title'>
                 Saldo total
@@ -127,7 +127,7 @@ export default function HomeScreen() {
               <ThemedText type='default' style={styles.tipoLancamentos}>
                 📈 Receitas: {formatarMoeda(totalReceita)}
               </ThemedText>
-              <ScrollView style={styles.lancamentosContainer}>
+              <View style={styles.lancamentosContainer}>
                 {lancamentosReceitas.map((lancamento, index) => (
                   <TouchableOpacity key={index} style={styles.lancamentoItem} onPress={() => {
                     // Navegar para a página "detalhes-lancamento"
@@ -139,13 +139,13 @@ export default function HomeScreen() {
                     </View>
                   </TouchableOpacity>
                 ))}
-              </ScrollView>
+              </View>
             </View>
             <View>
               <ThemedText type='default' style={styles.tipoLancamentos}>
                 📉 Despesas: {formatarMoeda(totalDespesas)}
               </ThemedText>
-              <ScrollView style={styles.lancamentosContainer}>
+              <View style={styles.lancamentosContainer}>
                 {lancamentosDespesas.map((lancamento, index) => (
                   <TouchableOpacity key={index} style={styles.lancamentoItem} onPress={() => {
                     // Navegar para a página "detalhes-lancamento"
@@ -157,15 +157,15 @@ export default function HomeScreen() {
                     </View>
                   </TouchableOpacity>
                 ))}
-              </ScrollView>
+              </View>
             </View>
-          </> :
-          <View style={styles.pagamentosVazioContainer}>
+          </ScrollView> :
+          <View style={styles.lancamentoVazioMensagemContainer}>
             <ThemedText align='center' type="defaultSemiBold">Você ainda não tem lembretes de pagamentos cadastrados. Que tal começar agora?</ThemedText>
             <Image style={styles.pagamentosVazio} source={require('@/assets/illustrations/empty.svg')} />
           </View>
         }
-        <View style={styles.buttonContainer}>
+        <View style={styles.lancamentoVazioMensagemContainer}>
           <Button title='Incluir lançamento' onPress={() => {
             router.push('/novo-lancamento')
           }} />
@@ -208,6 +208,7 @@ const styles = StyleSheet.create({
     marginBottom: 10
   },
   saldoContainer: {
+    textAlign: 'left',
     marginBottom: 30,
     marginTop: 30
   },
@@ -252,26 +253,20 @@ const styles = StyleSheet.create({
     fontFamily: 'NunitoRegular',
     fontSize: 12
   },
-  buttonContainer: {
+  lancamentoVazioMensagemContainer: {
     display: 'flex',
     flexDirection: 'column',
     marginTop: 20,
-    alignItems: 'center',
+    alignItems: 'center'    
   },
   link: {
     marginTop: 15,
     paddingVertical: 15,
-  },
-  pagamentosVazioContainer: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    maxWidth: 500,
-  },
+  },  
   textoCopiarLancamentos: {
     marginBottom: 20,
-    marginTop: 20
+    marginTop: 20,
+    display: 'flex'
   }
 });
 

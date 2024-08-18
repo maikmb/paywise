@@ -27,7 +27,8 @@
       "favicon": "./assets/app-insights/logo.png"
     },
     "plugins": [
-      "expo-router"     
+      "expo-router",
+      "@logrocket/react-native"
     ],
     "experiments": {
       "typedRoutes": true,
