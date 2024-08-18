@@ -4,21 +4,21 @@
     "slug": "paywise",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/app-insights/logo.png",
+    "icon": "./assets/app-insights/logo-main.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/app-insights/spash1.jpg",
+      "image": "./assets/app-insights/logo-main.jpg",
       "resizeMode": "contain",      
-      "backgroundColor": "#426ff5"
+      "backgroundColor": "#d9d9d9"
     },
     "ios": {
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/app-insights/logo.png",
-        "backgroundColor": "#426ff5"
+        "foregroundImage": "./assets/app-insights/logo-main.png",
+        "backgroundColor": "#d9d9d9"
       }
     },
     "web": {      
