@@ -5,10 +5,12 @@ type Props = PropsWithChildren<{
     title: string;
     color?: string;
     onPress: () => void;
+    style?: any;
 }>;
-export default function Button({ title, color, onPress }: Props) {
+
+export default function Button({ title, color, onPress, style }: Props) {
     return (
-        <Pressable style={styles.button} onPress={onPress}>
+        <Pressable style={{...styles.button, ...style}} onPress={onPress}>
             <Text style={styles.text}>{title}</Text>
         </Pressable>
     );

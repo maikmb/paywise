@@ -156,23 +156,26 @@ export default function HomeScreen() {
                 ))}
               </View>
             </View>
+            <Button title='Incluir lançamento' style={styles.botaoNovoLancamento} onPress={() => {
+              router.push('/novo-lancamento')
+            }} />
           </ScrollView> :
           <View style={styles.lancamentoVazioMensagemContainer}>
             <ThemedText align='center' type="defaultSemiBold">Você ainda não tem lembretes de pagamentos cadastrados. Que tal começar agora?</ThemedText>
             <Image style={styles.pagamentosVazio} source={require('@/assets/illustrations/empty.svg')} />
+            <Button title='Incluir lançamento' style={styles.botaoNovoLancamento} onPress={() => {
+              router.push('/novo-lancamento')
+            }} />
           </View>
         }
-        <View style={styles.lancamentoVazioMensagemContainer}>
-          <Button title='Incluir lançamento' onPress={() => {
-            router.push('/novo-lancamento')
-          }} />
-          {existeLancamentosAnteriores && isEmpty(lancamentosDespesas) && (
+        {existeLancamentosAnteriores && isEmpty(lancamentosDespesas) && (
+          <View style={styles.lancamentoVazioMensagemContainer}>
             <>
               <ThemedText align='center' type="defaultSemiBold" style={styles.textoCopiarLancamentos}>ou se preferir você pode copiar seus pagamentos do mês anterior</ThemedText>
               <Button title='Copiar do mês anterior' onPress={() => onCopiarMesAnterior()} />
             </>
-          )}
-        </View>
+          </View>
+        )}
       </ThemedView>
     </>
   );
@@ -254,16 +257,20 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'column',
     marginTop: 20,
-    alignItems: 'center'    
+    alignItems: 'center'
   },
   link: {
     marginTop: 15,
     paddingVertical: 15,
-  },  
+  },
   textoCopiarLancamentos: {
     marginBottom: 20,
     marginTop: 20,
     display: 'flex'
+  },
+  botaoNovoLancamento: {
+    marginTop: 20,
+    marginBottom: 20
   }
 });
 
